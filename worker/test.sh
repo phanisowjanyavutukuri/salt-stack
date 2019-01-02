@@ -1,6 +1,6 @@
 sudo apt-get update
-  sudo apt-get -y install socat conntrack ipset
-  wget -q --show-progress --https-only --timestamping \
+sudo apt-get -y install socat conntrack ipset
+wget -q --show-progress --https-only --timestamping \
   https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.12.0/crictl-v1.12.0-linux-amd64.tar.gz \
   https://storage.googleapis.com/kubernetes-the-hard-way/runsc-50c283b9f56bb7200938d9e207355f05f79f0d17 \
   https://github.com/opencontainers/runc/releases/download/v1.0.0-rc5/runc.amd64 \
@@ -9,22 +9,21 @@ sudo apt-get update
   https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubectl \
   https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-proxy \
   https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kubelet
-  sudo mkdir -p \
+sudo mkdir -p \
   /etc/cni/net.d \
   /opt/cni/bin \
   /var/lib/kubelet \
   /var/lib/kube-proxy \
   /var/lib/kubernetes \
   /var/run/kubernetes
-  sudo cp runsc-50c283b9f56bb7200938d9e207355f05f79f0d17 runsc
+sudo cp runsc-50c283b9f56bb7200938d9e207355f05f79f0d17 runsc
   sudo cp runc.amd64 runc
   chmod +x kubectl kube-proxy kubelet runc runsc
   sudo cp kubectl kube-proxy kubelet runc runsc /usr/local/bin/
   sudo tar -xvf crictl-v1.12.0-linux-amd64.tar.gz -C /usr/local/bin/
   sudo tar -xvf cni-plugins-amd64-v0.6.0.tgz -C /opt/cni/bin/
   sudo tar -xvf containerd-1.2.0-rc.0.linux-amd64.tar.gz -C /
-  POD_CIDR=10.0.9.0/16
-  cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
+cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
 {
     "cniVersion": "0.3.1",
     "name": "bridge",
@@ -87,8 +86,9 @@ LimitCORE=infinity
 WantedBy=multi-user.target
 EOF
 sudo cp worker1-key.pem worker1.pem /var/lib/kubelet/
-  sudo cp worker1.kubeconfig /var/lib/kubelet/kubeconfig
-  sudo cp ca.pem /var/lib/kubernetes/
+sudo cp worker1.kubeconfig /var/lib/kubelet/kubeconfig
+sudo cp ca.pem /var/lib/kubernetes/
+cat <<EOF | sudo tee /var/lib/kubelet/kubelet-config.yaml
 kind: KubeletConfiguration
 apiVersion: kubelet.config.k8s.io/v1beta1
 authentication:
@@ -155,20 +155,7 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
- sudo systemctl daemon-reload
-  sudo systemctl enable containerd kubelet kube-proxy
-  sudo systemctl start containerd kubelet kube-proxy
- kubectl config set-cluster kubernetes-the-hard-way \
-    --certificate-authority=ca.pem \
-    --embed-certs=true \
-    --server=https://10.128.0.4:6443
+sudo systemctl daemon-reload
+sudo systemctl enable containerd kubelet kube-proxy
+sudo systemctl start containerd kubelet kube-proxy
 
-  kubectl config set-credentials admin \
-    --client-certificate=admin.pem \
-    --client-key=admin-key.pem
-
-  kubectl config set-context kubernetes-the-hard-way \
-    --cluster=kubernetes-the-hard-way \
-    --user=admin
-
-  kubectl config use-context kubernetes-the-hard-way

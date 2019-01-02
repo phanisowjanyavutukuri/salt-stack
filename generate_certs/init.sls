@@ -85,7 +85,12 @@ run_encryption.sh:
     - source: salt://generate_certs/encryption.sh 
     - cwd: /
     - user: root
-
+run_worker_config.sh:
+  cmd.script:
+    - name: worker_config.sh
+    - source: salt://generate_certs/worker_config.sh
+    - cwd: /
+    - user: root
 
 
 
